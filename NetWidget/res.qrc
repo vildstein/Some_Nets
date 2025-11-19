@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+    <file>LeftDockWidget/leftDock.qml</file>
+
+    </qresource>
+</RCC>
