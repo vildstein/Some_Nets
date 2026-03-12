@@ -1,12 +1,21 @@
 #include "include.h"
 
+#include <time.h>
+
+
+// PRESENTATION_TO_NUMERIC
 // int inet_pton(int af, const char *src, void *dst); Преобразует адрес в двоичную форму
+
 // unsigned long int inet_addr(const char* ip_address); УСТАРЕВШАЯ Преобразует IP адрес из точечной нотации в двоичную форму
 // с сетевым порядком следования байтов. Лучше использовать inet_aton()
+
 // int inet_aton(const char* ip_addr, struct in_addr* addr); Преобразует IP адрес из точечной нотации в двоичную форму с 
 //сетевым порядком следования байтов.
 
+// HOST_TO_NETWORK_SHORT
 // uint16_t htons(uint16_t hostshort); //Преобразует двоичные данные из сетевого порядка следования байтов в серверный
+
+// HOST_TO_NETWORK_LONG
 // uint32_t htonl(uint32_t hostshort); //Преобразует двоичные данные из сетевого порядка следования байтов в серверный
 
 // int socket(int domain, int type, int protocol);
@@ -35,9 +44,9 @@ void err_sys(const char* fmt, ...) {
 int main(int argc, char** argv) {
 
 	const int portNumber = 13;
-	int sockDescr = 0;
+	int listenSockDescr = 0;
 	int nBytesRead = 0;
-	char recieveLine[MAXLINE + 1];
+	char buff[MAXLINE + 1];
 	struct sockaddr_in servaddr;
 
 	const char* localAdress = "127.0.0.1";
@@ -54,8 +63,8 @@ int main(int argc, char** argv) {
 		return 1;
 	} 
 
-	sockDescr = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockDescr < 0) {
+	listenSockDescr = socket(AF_INET, SOCK_STREAM, 0);
+	if (listenSockDescr < 0) {
 		//err_sys("socket func ERROR");
 		puts("Please, enter a IP address");
 		return 1;
@@ -64,10 +73,34 @@ int main(int argc, char** argv) {
 	//bzero(&servaddr, sizeof(servaddr) );
 
 	BZERO_MACRO(&servaddr, servaddr );
-
+	
 	servaddr.sin_family = AF_INET;
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);	
 	servaddr.sin_port = htons(portNumber);
 
+	int bindResult = bind(listenSockDescr, (SA*) &servaddr, sizeof(servaddr));
+
+	if (bindResult < 0) {
+		printf("Pe Pe WTF BindFunc ERROR");
+		return 1;
+	}
+
+	int listenResult = listen(listenSockDescr, LISTENQ);
+
+	if (listenResult < 0) {
+		printf("Pe Pe WTF");
+		return 1;
+	}
+
+	for (;;) {
+		
+	}
+
+	
+
+	
+	
+	/*
 	//char* ip = (argc == 1) ? localAdress : argv[1];
 
 	int adressCast = inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
@@ -97,6 +130,8 @@ int main(int argc, char** argv) {
 		puts("Read ERROR. Return.");
 		return 1;
 	}
+
+	*/
 
 
 	return 0;

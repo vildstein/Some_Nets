@@ -13,5 +13,7 @@
 #define SA struct sockaddr
 #define MAXLINE 4096
 
+#define LISTENQ 1024
+
 
 #endif /*INCLUDE_H*/

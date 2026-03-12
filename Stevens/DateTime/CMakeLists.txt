@@ -6,8 +6,12 @@ message(STATUS "PROJECT_NAME =  ${PROJECT_NAME}")
 message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 
 set(CMAKE_C_STANDARD 11)
-add_executable(${PROJECT_NAME}
-        main.c
+add_executable("${PROJECT_NAME}Client"
+        client.c
+        include.h)
+
+add_executable("${PROJECT_NAME}Server"
+        server.c
         include.h)
 
 #if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
