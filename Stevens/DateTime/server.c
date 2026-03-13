@@ -1,6 +1,7 @@
 #include "include.h"
 
 #include <time.h>
+#include <unistd.h>
 
 
 // PRESENTATION_TO_NUMERIC
@@ -25,20 +26,121 @@
 // в буфер. Возвращает число прочитанных байтов.
 
 
-static void err_doit(int, int, const char* , va_list) {
+static void err_doit(int errnoflag, int level, const char* fmt, va_list ap)
+{
+	int daemon_proc = 0;
+	int errno_save, n;
+	char buf[MAXLINE + 1];
+	errno_save = errno; /* value caller might want printed */
 
+#ifdef  HAVE_VSNPRINTF
+	vsnprintf(buf, MAXLINE, fmt, ap);       /* safe */
+#else
+	vsprintf(buf, fmt, ap);                                 /* not safe */
+#endif
+	n = strlen(buf);
+	if (errnoflag)
+		snprintf(buf + n, MAXLINE - n, ": %s", strerror(errno_save));
+		strcat(buf, "\n");
+
+	if (daemon_proc) {
+		syslog(level, buf);
+	} else {
+		fflush(stdout);         /* in case stdout and stderr are the same */
+		fputs(buf, stderr);
+		fflush(stderr);
+	}
+	return;
 }
 
-/*
-void err_sys(const char* fmt, ...) {
+
+void err_sys(const char* fmt, ...)
+{
 	va_list ap;
 	va_start(ap, fmt);
 	err_doit(1, LOG_ERR, fmt, ap);
 	va_end(ap);
-	
 	exit(1);
 }
-*/
+
+
+int SocketFuncWrap(int family, int type, int protocol)
+{
+	int n;
+	if ( (n = socket(family, type, protocol)) < 0) {
+		err_sys("socket error");
+	}
+	
+	return(n);
+}
+
+void BindFuncWrap(int fd, const struct sockaddr *sa, socklen_t salen)
+{
+	if (bind(fd, sa, salen) < 0)
+		err_sys("bind error");
+}
+
+
+
+
+//void BindFuncWrap(int fd, const struct sockaddr *sa, socklen_t salen)
+//{
+//    if (bind(fd, sa, salen) < 0)
+//        err_sys("bind error");
+//}
+
+void ListenFuncWrap(int fd, int backlog)
+{
+	char *ptr;
+	/*4can override 2nd argument with environment variable */
+    //if ( (ptr = getenv("CLIENTS_LISTEN_QUANTITY")) != NULL) {
+	//	backlog = atoi(ptr);
+	//}
+	if (listen(fd, backlog) < 0) {
+		err_sys("listen error");
+	}			
+}
+
+//ACCEPT
+//int AcceptFuncWraps(int fd, struct sockaddr *sa, socklen_t *salenptr)
+//{
+//	int n;
+//again:
+//	if ( (n = accept(fd, sa, salenptr)) < 0) {
+//#ifdef  EPROTO
+//	if (errno == EPROTO || errno == ECONNABORTED) {
+//#else
+//	if (errno == ECONNABORTED) {
+//#endif
+//	goto again;
+//	} else {
+//		err_sys("accept error");
+//	}
+//	return(n);
+//}
+
+int AcceptFuncWrap(int fd, struct sockaddr *sa, socklen_t *salenptr) {
+	int n;
+	if ( (n = accept(fd, sa, salenptr)) < 0) {
+		err_sys("accept error");
+	}
+	return(n);
+}
+
+//WRITE
+void WriteFuncWrap(int fd, void *ptr, size_t nbytes)
+{
+	if (write(fd, ptr, nbytes) != nbytes) {
+		err_sys("write error");
+	}                
+}
+
+
+void CloseFuncWrap(int fd) {
+	if (close(fd) == -1) {
+		err_sys("close error");
+	}                
+}
 
 
 int main(int argc, char** argv) {
@@ -47,6 +149,8 @@ int main(int argc, char** argv) {
 	int listenSockDescr = 0;
 	int nBytesRead = 0;
 	char buff[MAXLINE + 1];
+	time_t ticks;
+
 	struct sockaddr_in servaddr;
 
 	const char* localAdress = "127.0.0.1";
@@ -63,76 +167,37 @@ int main(int argc, char** argv) {
 		return 1;
 	} 
 
-	listenSockDescr = socket(AF_INET, SOCK_STREAM, 0);
-	if (listenSockDescr < 0) {
+	//listenSockDescr = socket(AF_INET, SOCK_STREAM, 0);
+	//if (listenSockDescr < 0) {
 		//err_sys("socket func ERROR");
-		puts("Please, enter a IP address");
-		return 1;
-	}
+	//	puts("Please, enter a IP address");
+	//	return 1;
+	//}
 
-	//bzero(&servaddr, sizeof(servaddr) );
+	listenSockDescr = SocketFuncWrap(AF_INET, SOCK_STREAM, 0);
 
 	BZERO_MACRO(&servaddr, servaddr );
-	
+
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);	
 	servaddr.sin_port = htons(portNumber);
 
-	int bindResult = bind(listenSockDescr, (SA*) &servaddr, sizeof(servaddr));
+	BindFuncWrap(listenSockDescr, (SA*) &servaddr, sizeof(servaddr));
+	
+	ListenFuncWrap(listenSockDescr, CLIENTS_LISTEN_QUANTITY);
 
-	if (bindResult < 0) {
-		printf("Pe Pe WTF BindFunc ERROR");
-		return 1;
-	}
+	int connectedDescriptor = 0;
 
-	int listenResult = listen(listenSockDescr, LISTENQ);
-
-	if (listenResult < 0) {
-		printf("Pe Pe WTF");
-		return 1;
-	}
-
+	
+	//"%.24s\er\en"
 	for (;;) {
-		
+		connectedDescriptor = AcceptFuncWrap(listenSockDescr, (SA*) NULL, NULL);
+
+		ticks = time( NULL);
+		snprintf(buff, sizeof(buff), "%.24s\er\en", ctime(&ticks));
+		WriteFuncWrap(connectedDescriptor, buff, strlen(buff));
+		CloseFuncWrap(connectedDescriptor);
 	}
-
-	
-
-	
-	
-	/*
-	//char* ip = (argc == 1) ? localAdress : argv[1];
-
-	int adressCast = inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
-
-	if (adressCast <= 0) {
-		//err_quit("inet_pton func error for %s", argv[1]);
-		puts("Please, enter a IP address");
-		return 1;
-	}
-
-	int conectResult = connect(sockDescr, (SA*) &servaddr,      sizeof(servaddr));
-	if (conectResult < 0) {
-		//err_sys("connect function ERROR");
-		puts("Please, enter a IP address");
-		return 1;
-	}
-
-	while ((nBytesRead = read(sockDescr, recieveLine, MAXLINE)) > 0) {
-		recieveLine[nBytesRead] = 0;
-		if (fputs(recieveLine, stdout) == EOF ) {
-			puts("fputs function ERROR. Return.");
-			return 1;
-		}
-	}
-
-	if (nBytesRead < 0) {
-		puts("Read ERROR. Return.");
-		return 1;
-	}
-
-	*/
-
 
 	return 0;
 }

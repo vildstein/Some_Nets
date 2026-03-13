@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
 	sockDescr = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockDescr < 0) {
 		//err_sys("socket func ERROR");
-		puts("Please, enter a IP address");
+		puts("socket func ERROR");
 		return 1;
 	}
 
@@ -81,18 +81,18 @@ int main(int argc, char** argv) {
 
 	if (adressCast <= 0) {
 		//err_quit("inet_pton func error for %s", argv[1]);
-		puts("Please, enter a IP address");
+		puts("inet_pton func ERROR");
 		return 1;
 	}
 
 	int conectResult = connect(sockDescr, (SA*) &servaddr,      sizeof(servaddr));
 	if (conectResult < 0) {
 		//err_sys("connect function ERROR");
-		puts("Please, enter a IP address");
+		puts("connect func ERROR");
 		return 1;
 	}
 
-	while ((nBytesRead = read(sockDescr, recieveLine, MAXLINE)) > 0) {
+	while ( (nBytesRead = read(sockDescr, recieveLine, MAXLINE)) > 0) {
 		recieveLine[nBytesRead] = 0;
 		if (fputs(recieveLine, stdout) == EOF ) {
 			puts("fputs function ERROR. Return.");
