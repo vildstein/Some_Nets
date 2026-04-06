@@ -16,13 +16,16 @@ void set_address(char* hostName, char* portNumber, SIN* sap, char* protocol) {
     
     sap->sin_family = AF_INET;
 
-    if ( hostName != NULL && !inet_aton(hostName, &sap->sin_addr) ) {
-        hp = gethostbyname(hostName);
-        printf("hostName = %s", hostName);
-        if (hp == NULL) {
-            error(1, 0, "unknown host: %s\n", hostName);
+    if ( hostName != NULL ) {
+        if ( !inet_aton( hostName, &sap->sin_addr ) ) {
+            hp = gethostbyname(hostName);
+            printf("hostName = %s \n", hostName);
+
+            if (hp == NULL) {
+                error(1, 0, "unknown host: %s\n", hostName);
+            }
+            sap->sin_addr = *(struct in_addr*) hp->h_addr;
         }
-        sap->sin_addr = *(struct in_addr*) hp->h_addr;
     } else {
         sap->sin_addr.s_addr = htonl( INADDR_ANY );
     }

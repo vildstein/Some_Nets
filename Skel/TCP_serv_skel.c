@@ -23,12 +23,15 @@ int main( int argc, char** argv) {
     if (argc == 3) {
         hostName = argv[ 1 ];
         portNumber = argv[ 2 ];
+        puts("(argc = 3");
     } else if (argc == 2) {
         hostName = NULL;
         portNumber = argv[ 1 ];
+        puts("argc = 2");
     } else if (argc = 1) {
         hostName = NULL;
         portNumber = "9000";
+        puts("argc = 1");
     } else {
         puts("NO HOST ADDRESS WAS PROVIDED. EXIT.\n");
         EXIT(1);
