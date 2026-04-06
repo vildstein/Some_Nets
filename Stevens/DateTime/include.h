@@ -5,6 +5,7 @@
 #include <syslog.h> // LOG_ERR
 #include <sys/types.h>
 #include <sys/socket.h> // socket
+#include <sys/errno.h>
 #include <netinet/in.h> // sockaddr_in, htons
 #include <string.h>
 #include <stdio.h> // puts()
