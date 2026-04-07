@@ -8,34 +8,41 @@ message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 
 set(CMAKE_C_STANDARD 11)
 
-set(TCP_CLIENT_APP_NAME "${PROJECT_NAME}_TCP_client_skel.exe")
-set(TCP_SERVER_APP_NAME "${PROJECT_NAME}_TCP_server_skel.exe")
+set(TCP_CLIENT_APP_NAME "${PROJECT_NAME}_TCP_client.exe")
+set(TCP_SERVER_APP_NAME "${PROJECT_NAME}_TCP_server.exe")
 
-set(UDP_CLIENT_APP_NAME "${PROJECT_NAME}_UDP_client_skel.exe")
-set(UDP_SERVER_APP_NAME "${PROJECT_NAME}_UDP_server_skel.exe")
+set(UDP_CLIENT_APP_NAME "${PROJECT_NAME}_UDP_client.exe")
+set(UDP_SERVER_APP_NAME "${PROJECT_NAME}_UDP_server.exe")
 
-#message(STATUS "TCP_CLIENT_APP_NAME =  ${CLIENT_APP_NAME}")
-#set(exList "${TCP_CLIENT_APP_NAME};${TCP_SERVER_APP_NAME};${UDP_CLIENT_APP_NAME};${UDP_SERVER_APP_NAME}")
-
-set(exList "${TCP_CLIENT_APP_NAME};${TCP_SERVER_APP_NAME}")
+set(exList "${TCP_CLIENT_APP_NAME};${TCP_SERVER_APP_NAME};${UDP_CLIENT_APP_NAME};${UDP_SERVER_APP_NAME}")
+set(FUNCS_DEPS_LIST "func_ERROR.c;func_SET_ADDRESS.c;skel_defines.h")
 
 foreach (VAR IN LISTS exList ITEMS)
     message(STATUS "VAR_IN_FOREACH =  ${VAR}")
 endforeach()
 
 add_executable(${TCP_CLIENT_APP_NAME}
+
         TCP_client_skel.c
         func_TCP_CLIENT.c
-        func_ERROR.c
-        fucn_SET_ADDRESS.c
+        ${FUNCS_DEPS_LIST}
         skel_defines.h)
 
 add_executable(${TCP_SERVER_APP_NAME}
         TCP_serv_skel.c
         func_TCP_SERVER.c
-        func_ERROR.c
-        fucn_SET_ADDRESS.c
-        skel_defines.h)
+        ${FUNCS_DEPS_LIST}
+        )
+
+add_executable(${UDP_CLIENT_APP_NAME}
+        UDP_client_skel.c
+        ${FUNCS_DEPS_LIST}
+)
+
+add_executable(${UDP_SERVER_APP_NAME}
+        UDP_serv_skel.c
+        ${FUNCS_DEPS_LIST}
+)
 
 foreach (APP_NAME IN LISTS exList)
     message(STATUS "APP_NAME =  ${APP_NAME}")
@@ -48,9 +55,6 @@ foreach (APP_NAME IN LISTS exList)
         message(STATUS "DEFINED NOT LINUX")
     endif()
 endforeach()
-
-
-
 
 #if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 #    target_compile_definitions(${CLIENT_APP_NAME} PRIVATE OS_DEFINED_CMAKE_LIN)
