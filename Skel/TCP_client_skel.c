@@ -1,7 +1,8 @@
 #include "skel_defines.h"
 
 ERROR_FORWARD_DECL
-SET_ADDRESS_FORWARD_DECL
+//SET_ADDRESS_FORWARD_DECL
+TCP_CLIENT_FORWARD
 CLIENT_FUNC_FORWARD_DECL
 
 int main( int argc, char** argv ) {
@@ -28,17 +29,7 @@ int main( int argc, char** argv ) {
 
     INIT();
 
-    set_address( host, port, &peer, protocol );
-
-    s = socket(AF_INET, SOCK_STREAM, 0 );
-
-    if (!IS_VALID_SOCKET(s)) {
-        error(1, errno, "SOCK FUNC FAILED");
-    }
-
-    if (connect( s, STRUCT_SOCKADDR_CAST&peer, sizeof(peer))) {
-        error(1, errno, "CONNECT FUNC FAILED");
-    }
+    s = tcp_client(host, port);
 
     client(s, &peer);
 

@@ -25,13 +25,16 @@ endforeach()
 
 add_executable(${TCP_CLIENT_APP_NAME}
         TCP_client_skel.c
-        error_func.c
-        set_address_func.c
+        func_TCP_CLIENT.c
+        func_ERROR.c
+        fucn_SET_ADDRESS.c
         skel_defines.h)
 
 add_executable(${TCP_SERVER_APP_NAME}
         TCP_serv_skel.c
-        set_address_func.c
+        func_TCP_SERVER.c
+        func_ERROR.c
+        fucn_SET_ADDRESS.c
         skel_defines.h)
 
 foreach (APP_NAME IN LISTS exList)

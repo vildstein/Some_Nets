@@ -48,6 +48,9 @@ typedef struct sockaddr_in SIN; //#define SIN struct sockaddr_in
 #define CLIENT_FUNC_FORWARD_DECL static void client(SOCKET s, SIN* peer);
 #define SERVER_FUNC_FORWARD_DECL static void server(SOCKET s, SIN* peer);
 
+#define TCP_SERVER_FORWARD SOCKET tcp_server (char* hostName, char* portName);
+#define TCP_CLIENT_FORWARD SOCKET tcp_client(char* hostName, char* portName);
+
 //#define PROGRAM_NAME char* program_name;
 
 #define TRUE 1
@@ -73,7 +76,5 @@ typedef struct sockaddr_in SIN; //#define SIN struct sockaddr_in
 #include <netinet/in.h>
 #include <netdb.h>
 #endif
-
-
 
 #endif //SKEL_DEFINES_H

@@ -1,8 +1,8 @@
 #include "skel_defines.h"
 
 ERROR_FORWARD_DECL
-SET_ADDRESS_FORWARD_DECL
 SERVER_FUNC_FORWARD_DECL
+TCP_SERVER_FORWARD
 
 int main( int argc, char** argv) {
 
@@ -13,8 +13,8 @@ int main( int argc, char** argv) {
     char* portNumber = DEFAULT_PORT;
     char* protocol = DEFAULT_NETWORK_PROTOCOL;
 
-    SOCKET sock1;
-    SOCKET s;
+    SOCKET answeringSocket;
+    SOCKET listeningSocket;
 
     const int on = 1;
 
@@ -37,37 +37,19 @@ int main( int argc, char** argv) {
         EXIT(1);
     }
 
-    set_address( hostName, portNumber, &local, "tcp" ); //Check this
-
-    s = socket(AF_INET, SOCK_STREAM, 0 );
-
-    if (!IS_VALID_SOCKET(s)) {
-        error(1, errno, "SOCKET FUNC FAILURE");
-    }
-
-    if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on))) {
-        error(1, errno, "SET_SOCK_OPT FUNC FAILURE");
-    }
-
-    if ( bind( s, (struct sockaddr*) &local, sizeof(local)) ) {
-        error(1, errno, "BIND FUNC FAILURE");
-    }
-
-    if (listen(s, NLISTEN)) {
-        error(1, errno, "LISTEN FUNC FAILURE");
-    }
+    listeningSocket = tcp_server(hostName, portNumber);
 
     int peerLen;
 
     do {
         peerLen = sizeof(peer);
-        sock1 = accept( s, (struct sockaddr*) &peer, &peerLen);
-        if (!IS_VALID_SOCKET(sock1) ) {
+        answeringSocket = accept( listeningSocket, (struct sockaddr*) &peer, &peerLen);
+        if (!IS_VALID_SOCKET(answeringSocket) ) {
             error(1, errno, "ACCEPT FUNCTION FAIL");
         }
 
-        server(sock1, &peer);
-        CLOSE( sock1 );
+        server(answeringSocket, &peer);
+        CLOSE( answeringSocket );
 
     } while (TRUE);
 
