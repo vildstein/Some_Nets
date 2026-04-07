@@ -39,7 +39,7 @@ typedef struct sockaddr_in SIN; //#define SIN struct sockaddr_in
 #define STRUCT_SOCKADDR_CAST (struct sockaddr*)
 #define STRUCT_IN_ADDR_CAST (struct in_addr*)
 
-#define DEFAULT_HOST {"localhost"}
+#define DEFAULT_HOST {"127.0.0.1"}
 #define DEFAULT_PORT {"9000"}
 #define DEFAULT_NETWORK_PROTOCOL {"tcp"};
 
@@ -48,8 +48,10 @@ typedef struct sockaddr_in SIN; //#define SIN struct sockaddr_in
 #define CLIENT_FUNC_FORWARD_DECL static void client(SOCKET s, SIN* peer);
 #define SERVER_FUNC_FORWARD_DECL static void server(SOCKET s, SIN* peer);
 
-#define TCP_SERVER_FORWARD SOCKET tcp_server (char* hostName, char* portName);
+#define TCP_SERVER_FORWARD SOCKET tcp_server(char* hostName, char* portName);
 #define TCP_CLIENT_FORWARD SOCKET tcp_client(char* hostName, char* portName);
+#define UDP_SERVER_FORWARD SOCKET udp_server(char* hostName, char* portName, struct sockaddr_in* local);
+#define UDP_CLIENT_FORWARD SOCKET udp_client(char* hostName, char* portName, struct sockaddr_in* sp);
 
 //#define PROGRAM_NAME char* program_name;
 

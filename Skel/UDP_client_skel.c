@@ -1,8 +1,7 @@
 #include "skel_defines.h"
 
 ERROR_FORWARD_DECL
-SET_ADDRESS_FORWARD_DECL
-//TCP_CLIENT_FORWARD
+UDP_CLIENT_FORWARD
 CLIENT_FUNC_FORWARD_DECL
 
 int main( int argc, char** argv ) {
@@ -12,7 +11,6 @@ int main( int argc, char** argv ) {
 
     char* host = DEFAULT_HOST;
     char* portNumber = DEFAULT_PORT;
-    char* protocol =  {"udp"};
 
     switch(argc) {
     case 1:
@@ -32,13 +30,7 @@ int main( int argc, char** argv ) {
 
     INIT();
 
-    set_address(host, portNumber, &peer, protocol);
-
-    sock = socket(AF_INET, SOCK_DGRAM, 0);
-    if ( !IS_VALID_SOCKET(sock) ) {
-        error(1, errno, "SOCKET FUNCTION MISTAKE");
-    }
-
+    sock = udp_client(host, portNumber, &peer);
     client(sock, &peer);
 
     EXIT(0);

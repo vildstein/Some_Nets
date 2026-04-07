@@ -22,25 +22,26 @@ foreach (VAR IN LISTS exList ITEMS)
 endforeach()
 
 add_executable(${TCP_CLIENT_APP_NAME}
-
         TCP_client_skel.c
         func_TCP_CLIENT.c
         ${FUNCS_DEPS_LIST}
-        skel_defines.h)
+)
 
 add_executable(${TCP_SERVER_APP_NAME}
         TCP_serv_skel.c
         func_TCP_SERVER.c
         ${FUNCS_DEPS_LIST}
-        )
+)
 
 add_executable(${UDP_CLIENT_APP_NAME}
         UDP_client_skel.c
+        func_UDP_CLIENT.c
         ${FUNCS_DEPS_LIST}
 )
 
 add_executable(${UDP_SERVER_APP_NAME}
         UDP_serv_skel.c
+        func_UDP_SERVER.c
         ${FUNCS_DEPS_LIST}
 )
 
