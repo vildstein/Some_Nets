@@ -1,0 +1,2 @@
+module AppNetWidget
+leftDock 1.0 leftDock.qml
