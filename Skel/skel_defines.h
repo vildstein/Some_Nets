@@ -18,18 +18,16 @@ typedef int SOCKET;
 #elif defined(OS_DEFINED_CMAKE_WIN)
 
 #define INIT() WSADATA data;  if ( WSAStartup(MAKEWORD(2, 2), &data) ) { printf("Failed to initialize.\n"); return -1; };
-#define BZERO_SOCK_ADDR_IN_STRUCT(sap) memset( sap, int(0), sizeof(*sap) );
+#define BZERO_SOCK_ADDR_IN_STRUCT(sap) memset( sap, 0, sizeof(*sap) );
 #define IS_VALID_SOCKET(socket_descriptor) ( (socket_descriptor) != INVALID_SOCKET )
-
-typedef size_t SOCKET;
 
 #endif
 
 #define EXIT(s) 	puts("exit");	\
-			        exit( s );
+						exit( s );
 
 #define CLOSE(s) if ( close( s ) ) error( 1, errno, \
-                 "CLOSE FUNC MISTAKE " )
+								"CLOSE FUNC MISTAKE " )
 
 #define SET_ERRNO(e) errno = ( e )
 #define NLISTEN 5
@@ -63,13 +61,13 @@ typedef struct sockaddr_in SIN; //#define SIN struct sockaddr_in
 #include <stdarg.h>
 #include <string.h>
 #include <strings.h>
-#include <errno.h>
-
 #include <sys/time.h>
 
 #if defined(OS_DEFINED_CMAKE_WIN)
 #include <winsock2.h>
 #include <winsock.h>
+#include <stddef.h>
+typedef size_t SOCKET;
 #endif
 
 #if defined(OS_DEFINED_CMAKE_LIN)
@@ -77,6 +75,7 @@ typedef struct sockaddr_in SIN; //#define SIN struct sockaddr_in
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <errno.h>
 #endif
 
 #endif //SKEL_DEFINES_H
