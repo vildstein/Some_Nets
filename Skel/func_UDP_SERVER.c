@@ -20,9 +20,8 @@ SOCKET udp_server(char* hostName, char* portName, struct sockaddr_in* local) {
 	
 	if ( bind ( sock, (struct sockaddr*) local, sizeof(*local) ) ) {
 		error( 1, errno, "BIND FUNC MISTAKE");
-    	}
-    	
-    	return sock;
+	}
+	return sock;
 }
 
 #endif //UDP_SERVER_FUNC_H
