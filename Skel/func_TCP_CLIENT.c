@@ -17,12 +17,10 @@ SOCKET tcp_client(char* hostName, char* portName) {
 	if ( !IS_VALID_SOCKET(sock) ) {
 		error( 1, errno, "SOCKET FUNC MISTAKE");
 	}
-
-  	if ( connect(sock, (struct sockaddr*) &peer, sizeof(peer)) ) {
-  		error( 1, errno, "CONNECT FUNC MISTAKE");
-  	}
-  	
-  	return sock;
+	if ( connect(sock, (struct sockaddr*) &peer, sizeof(peer)) ) {
+		error( 1, errno, "CONNECT FUNC MISTAKE");
+	}
+	return sock;
 }
 
 
