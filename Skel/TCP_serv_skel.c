@@ -56,11 +56,11 @@ int main( int argc, char** argv) {
 }
 
 static void server(SOCKET s, SIN* peer) {
-	char* answer =  {"TCP Serv Skeleton Answer\n\n\n"};
+	const char* answer =  {"TCP Serv Skeleton Answer\n\n\n"};
 	send(s, answer, strlen(answer), 0);
 }
 
 static void ans(SOCKET s, const char* ans) {
-	char* answer =  ans;
+	const char* answer =  ans;
 	send(s, answer, strlen(answer), 0);
 }

@@ -15,7 +15,7 @@ set(UDP_CLIENT_APP_NAME "${PROJECT_NAME}_UDP_client.exe")
 set(UDP_SERVER_APP_NAME "${PROJECT_NAME}_UDP_server.exe")
 
 set(exList "${TCP_CLIENT_APP_NAME};${TCP_SERVER_APP_NAME};${UDP_CLIENT_APP_NAME};${UDP_SERVER_APP_NAME}")
-set(FUNCS_DEPS_LIST "func_ERROR.c;func_SET_ADDRESS.c;skel_defines.h")
+set(FUNCS_DEPS_LIST "ERROR_func.c;SET_ADDRESS_func.c;READ_N_func.c;skel_defines.h")
 
 foreach (VAR IN LISTS exList ITEMS)
     message(STATUS "VAR_IN_FOREACH =  ${VAR}")
@@ -23,25 +23,25 @@ endforeach()
 
 add_executable(${TCP_CLIENT_APP_NAME}
         TCP_client_skel.c
-        func_TCP_CLIENT.c
+	tcp_functions.c
         ${FUNCS_DEPS_LIST}
 )
 
 add_executable(${TCP_SERVER_APP_NAME}
         TCP_serv_skel.c
-        func_TCP_SERVER.c
+	tcp_functions.c
         ${FUNCS_DEPS_LIST}
 )
 
 add_executable(${UDP_CLIENT_APP_NAME}
         UDP_client_skel.c
-        func_UDP_CLIENT.c
+	upd_functions.c
         ${FUNCS_DEPS_LIST}
 )
 
 add_executable(${UDP_SERVER_APP_NAME}
-        UDP_serv_skel.c
-        func_UDP_SERVER.c
+	UDP_serv_skel.c
+	upd_functions.c
         ${FUNCS_DEPS_LIST}
 )
 

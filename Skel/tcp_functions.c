@@ -1,10 +1,27 @@
-#ifndef TCP_SERVER_FUNC_H
-#define TCP_SERVER_FUNC_H
+#ifndef TCP_FUNCTIONS_H
+#define TCP_FUNCTIONS_H
 
 #include "skel_defines.h"
 
 ERROR_FORWARD_DECL
 SET_ADDRESS_FORWARD_DECL
+
+SOCKET tcp_client(char* hostName, char* portName) {
+
+	struct sockaddr_in peer;
+	SOCKET sock;
+
+	set_address(hostName, portName, &peer, "tcp");
+	sock = socket(AF_INET, SOCK_STREAM, 0);
+
+	if ( !IS_VALID_SOCKET(sock) ) {
+		error( 1, errno, "SOCKET FUNC MISTAKE");
+	}
+	if ( connect(sock, (struct sockaddr*) &peer, sizeof(peer)) ) {
+		error( 1, errno, "CONNECT FUNC MISTAKE");
+	}
+	return sock;
+}
 
 SOCKET tcp_server (char* hostName, char* portName) {
 
@@ -36,4 +53,5 @@ SOCKET tcp_server (char* hostName, char* portName) {
 	return socket;
 }
 
-#endif //TCP_SERVER_FUNC_H
+
+#endif //TCP_FUNCTIONS_H
