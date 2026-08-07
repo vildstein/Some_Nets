@@ -42,7 +42,7 @@ static void echo_message(SOCKET s) {
 	struct sockaddr_in from;
 	socklen_t peerlen;
 
-	const size_t biff_size = 512;
+	const size_t biff_size = 7;
 
 	char buffer[biff_size];
 
@@ -84,16 +84,13 @@ static void echo_message(SOCKET s) {
 				if ( bytesReciced < 0 ) {
 					error(1, errno, "RECVFROM FUNCTION MISTAKE");
 				} else {
-					//ston from.sin_addr;
-					//in_port_t portNum = from.sin_port;
-					//int portStr = ntohs(portNum);
-					//struct in_addr sin_addr_struct = from.sin_addr;
-					//int port = inet_pton(portNum);
 
 					char* host = inet_ntoa(from.sin_addr);
-					//int port = ntohs(from.sin_port);
+					in_port_t p_num = from.sin_port;
+					p_num = ntohs(p_num);
+
 					if (host != NULL) {
-						printf("recieved %d bytes from host %s\n", bytesReciced, host);
+						printf("recieved %d bytes from host %s port %d\n", bytesReciced, host, p_num);
 					}
 
 					int sended = sendto(s, buffer, sizeof(buffer), NO_FLAGS, SA &from, peerlen);
@@ -105,7 +102,8 @@ static void echo_message(SOCKET s) {
 					}
 				}
 
-				break;
+				// cont. listen
+				tv_str.tv_sec = 5;
 
 			} else {
 				error(1, errno, "FD_SET IS NOT ABLE WORK WITH PROVIDED SOCKET.");

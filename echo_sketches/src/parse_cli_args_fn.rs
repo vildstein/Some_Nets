@@ -26,7 +26,7 @@ pub fn parse_cli_args(argv : Vec<String>) -> String {
         }
 
         println!("ip adress defined as = {}", addr);
-        println!("port defined as = {}", port);
+        println!("destination port defined as = {}", port);
 
         addr_port
 }

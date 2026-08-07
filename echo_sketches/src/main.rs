@@ -20,10 +20,9 @@ fn main() {
         println!("connection func failed");
         process::exit(1);
     } else {
-        println!("binded with UDP");
+        let addr = udp_socket.local_addr().unwrap();
+        println!("binded with UDP address {}", addr);
     }
-
-
 
     let send_result = send_dgram(&udp_socket);
 
@@ -70,7 +69,7 @@ fn send_dgram(udp_sock : &UdpSocket) -> Result<usize, Error> {
 
 fn try_recv(udp_sock : &UdpSocket)  {
 
-    let mut buf: [u8; 10] = [0; 10];
+    let mut buf: [u8; 7] = [0; 7];
 
     let recv_res = udp_sock.recv(&mut buf);
 
