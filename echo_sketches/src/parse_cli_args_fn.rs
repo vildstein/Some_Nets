@@ -1,4 +1,11 @@
 
+
+// TO DO
+// check was correct ot incorrecct ip and port
+// check empty flags
+// add buff capacity as args
+// add tcp or udp from flags
+
 pub fn parse_cli_args(argv : Vec<String>) -> String {
 
     let argc = argv.len();

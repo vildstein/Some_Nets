@@ -2,10 +2,8 @@ use std::net::UdpSocket;
 use std::io::Error;
 use std::process;
 use std::env;
-//use std::sync::mpsc::RecvError;
 
-mod parse_cli_args_fn;
-use parse_cli_args_fn::parse_cli_args;
+use echo_sketches::parse_cli_args_fn::parse_cli_args;
 
 fn main() {
     let argv : Vec<String> = env::args().collect();
