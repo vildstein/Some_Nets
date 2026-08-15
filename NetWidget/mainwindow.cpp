@@ -56,21 +56,16 @@ void MainWindow::closeEvent(QCloseEvent* event)
 QQuickWidget* MainWindow::showSomeQML()
 {
 	QUrl file(("qrc:/LeftDockWidget/leftDock.qml"));
-	//QQmlApplicationEngine* engine = new QQmlApplicationEngine(this);
-	//engine->load(file);
-
-	//QSurfaceFormat fmt;
-	//fmt.setSamples(4);
-	//fmt.setProfile(QSurfaceFormat::CoreProfile);
 
 	QQuickWidget* view = new QQuickWidget;
 	view->setAttribute(Qt::WA_DeleteOnClose, true);
-	//view->setFormat(fmt);
+
 	view->resize(200, 300);
 	view->setResizeMode(QQuickWidget::SizeRootObjectToView);
 
 	view->setSource(file);
 	connect(view, &QQuickWidget::destroyed, qApp, QApplication::quit);
+	connect(view->rootObject(), SIGNAL(appCloseSignal()), view, SLOT(close()));
 
 	return view;
 }
@@ -83,7 +78,7 @@ QDockWidget* MainWindow::createLeftDock()
 
 	QFrame* fr = new QFrame;
 	fr->setFrameStyle(QFrame::NoFrame);
-	//fr->setLineWidth(3);
+
 	QHBoxLayout* topLay = new QHBoxLayout;
 	topLay->addWidget(new QPushButton(tr("Start")));
 	topLay->addWidget(new QPushButton(tr("Close")));
@@ -110,8 +105,7 @@ void MainWindow::createServer()
 	serv = new ServTCP(this);
 	connect(serv, &ServTCP::result, this, &MainWindow::onResultSlot);
 	if (!serv->listen(QHostAddress::Any, PORT_NUMBER)) {
-	//if (!serv->listen(QHostAddress("192.168.1.61"), PORT_NUMBER) ) {
-		std::cerr << "No Server. FUCK OFF" << std::endl;
+		std::cerr << "No Server was created" << std::endl;
 		QApplication::quit();
 	}
 }
@@ -119,7 +113,7 @@ void MainWindow::createServer()
 void MainWindow::fuckOffSlot()
 {
 	auto quickItem = m_quickView->rootObject();
-	QMetaObject::invokeMethod(quickItem, "fuckOff", Qt::AutoConnection);
+	QMetaObject::invokeMethod(quickItem, "someFunc", Qt::AutoConnection);
 }
 
 void MainWindow::onResultSlot(const QString& string)

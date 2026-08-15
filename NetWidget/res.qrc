@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-    <file>LeftDockWidget/leftDock.qml</file>
-
+        <file>LeftDockWidget/leftDock.qml</file>
+        <file>RightDockWidget/rightDock.qml</file>
     </qresource>
 </RCC>

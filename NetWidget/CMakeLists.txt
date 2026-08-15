@@ -67,13 +67,12 @@ endif()
 qt_add_qml_module(${PROJECT_NAME}
    URI AppNetWidget
    VERSION 1.0
-   #typeinfo leftDock.qml
    TYPEINFO
 	leftDock
    QML_FILES
 	LeftDockWidget/leftDock.qml
-   #SOURCES
-#	mainwindow.h mainwindow.cpp
+	RightDockWidget/rightDock.qml
+
 )
 
 

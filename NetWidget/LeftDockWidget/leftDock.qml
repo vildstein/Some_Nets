@@ -1,44 +1,16 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Window
 import AppNetWidget 1.0
 
-
-
-
-
 Rectangle {
-//ApplicationWindow {
+
 	id: root
 	visible: true
 
 	width: 500
 	height: 500
 
-	// Window {
-	// 	id: winn
-	// 	visible: true
-	// 	width: 50
-	// 	height: 50
-	// 	color: "red"
-
-	// 	Text {
-	// 		id: winText
-
-	// 	}
-
-	// 	Button {
-	// 		anchors.centerIn: winn
-	// 		visible: true
-	// 		width: 20
-	// 		height: 20
-	// 		text: "Ok"
-
-	// 	}
-	// }
-
-	// here we use the Window.active and Window.palette ordinary properties
-	//color: active ? palette.active.window : palette.inactive.window
+	signal appCloseSignal();
 
 	Text {
 		id: redText
@@ -57,12 +29,23 @@ Rectangle {
 		visible: true
 		width: 100
 		height: 50
-		text: "Ok"
+		text: qsTr("Close App")
 
+		onClicked: {
+			root.appCloseSignal();
+		}
 	}
 
-	function fuckOff() {
-		console.log("fuckOffFuncton");
+	onAppCloseSignal: {
+		writeMessageIntoConsole("app is about to close");
+	}
+
+	function writeMessageIntoConsole(mesg : string ) {
+		console.log(mesg);
+	}
+
+	function someFunc() {
+		console.log("function works");
 	}
 }
 

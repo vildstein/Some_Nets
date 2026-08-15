@@ -15,7 +15,7 @@ fn main() {
     let connect_res = connect_func_wrap(&udp_socket, addr);
 
     if connect_res.is_err() {
-        println!("connection func failed");
+        eprintln!("connection func failed");
         process::exit(1);
     } else {
         let addr = udp_socket.local_addr().unwrap();
@@ -29,7 +29,7 @@ fn main() {
         println!("sended {} bytes", bytes_sended);
 
     } else {
-        println!("send func mistake");
+        eprintln!("send func mistake");
     }
 
     //if send_result.is_ok() {
@@ -43,8 +43,8 @@ fn socket_func_wrap() -> UdpSocket {
     let udp_socket_res = UdpSocket::bind(initial_zero_addr);
 
     if udp_socket_res.is_err() {
-        println!("SOCKET func creation mistake");
-        println!("UNABLE create udp socket");
+        eprintln!("SOCKET func creation mistake");
+        eprintln!("UNABLE create udp socket");
         process::exit(1);
     }
 
@@ -75,6 +75,6 @@ fn try_recv(udp_sock : &UdpSocket)  {
         let bytes_recieved = recv_res.unwrap();
         println!("received {bytes_recieved} bytes {:?}", &buf[..bytes_recieved]);
     } else {
-        println!("recv func mistake");
+        eprintln!("recv func mistake");
     }
 }
