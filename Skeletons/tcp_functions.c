@@ -6,20 +6,20 @@
 ERROR_FORWARD_DECL
 SET_ADDRESS_FORWARD_DECL
 
-#define NO_ADDITIONAL_PROTOCOL_REQUIRED 0
+#define NO_ADDITIONAL_OPTIONS_REQUIRED 0
 
-SOCKET tcp_client(char* hostName, char* portName) {
+SOCKET tcp_client(char* hostName, char* portName, struct sockaddr_in* host) {
 
 	struct sockaddr_in peer;
 	SOCKET sock;
 
-	set_address(hostName, portName, &peer, TCP_NETWORK_PROTOCOL);
-	sock = socket(AF_INET, SOCK_STREAM, 0);
+	set_address(hostName, portName, host, TCP_NETWORK_PROTOCOL);
+	sock = socket(AF_INET, SOCK_STREAM, NO_ADDITIONAL_OPTIONS_REQUIRED);
 
 	if ( !IS_VALID_SOCKET(sock) ) {
 		error( 1, errno, "SOCKET FUNC MISTAKE");
 	}
-	if ( connect(sock, (struct sockaddr*) &peer, sizeof(peer)) ) {
+	if ( connect(sock, (struct sockaddr*) host, sizeof((*host))) ) {
 		error( 1, errno, "CONNECT FUNC MISTAKE");
 	}
 	return sock;
@@ -30,7 +30,7 @@ SOCKET tcp_server(char* hostName, char* portName, struct sockaddr_in* local) {
 	SOCKET sockDecriptor;
 
 	set_address(hostName, portName, local, TCP_NETWORK_PROTOCOL);
-	sockDecriptor = socket(AF_INET, SOCK_STREAM, NO_ADDITIONAL_PROTOCOL_REQUIRED);
+	sockDecriptor = socket(AF_INET, SOCK_STREAM, NO_ADDITIONAL_OPTIONS_REQUIRED);
 
 	if (!IS_VALID_SOCKET( sockDecriptor )) {
 		error( 1, errno, "SOCKET FUNC MISTAKE");

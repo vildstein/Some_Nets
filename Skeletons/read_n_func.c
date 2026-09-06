@@ -2,6 +2,9 @@
 #define READ_N_FUNC_H
 
 #include "skel_defines.h"
+#include <asm-generic/errno-base.h>
+#include <asm-generic/errno.h>
+#include <errno.h>
 
 // unsigned long int ntohl, unsigned short int ntol ntohs преобразует двоичные данные из сетевого порядка следования байтов в серверный.
 // https://www.opennet.ru/man.shtml?topic=ntohl&category=3&russian=0
@@ -15,6 +18,7 @@ int readn(SOCKET socDescriptor, char* bufferToRead, size_t messageLenght) {
 
 	while (count > 0) {
 		recived = recv(socDescriptor, bufferToRead, count, MSG_NOSIGNAL);
+		printf("recieved %d bytes\n", recived);
 
 		if (recived < 0) {
 			if (errno == EINTR) {
@@ -64,6 +68,7 @@ int readvrec(SOCKET socDescriptor, char* bufferToRead, size_t messageLenght) {
 			}
 		}
 		// set_errno(EMSGSIZE);
+		errno = EMSGSIZE;
 		return -1;
 	}
 
@@ -75,5 +80,44 @@ int readvrec(SOCKET socDescriptor, char* bufferToRead, size_t messageLenght) {
 
 	return recLenght;
 }
+
+int readline(SOCKET socDescriptor, char* bufferToRead, size_t buffLen) {
+
+    char* buffInitial = bufferToRead;
+    static char* bp;
+    static int count = 0;
+    static char additionalBuff[1500];
+
+    char ch;
+
+    const int NO_RECIVE_FLAGS = 0;
+
+    while(--buffLen > 0) {
+        if (--count <= 0) {
+            count = recv(socDescriptor, additionalBuff, sizeof(additionalBuff), NO_RECIVE_FLAGS);
+            if (count < 0) {
+                if (errno == EINTR) {
+                    buffLen++;
+                    continue;
+                }
+                return -1;
+            }
+            if (count == 0) {
+                return 0;
+            }
+
+        }
+
+        bufferToRead = additionalBuff; //???
+        *bufferToRead++ = ch;
+        if (ch == '\n') {
+            *bufferToRead++ = '\n';
+            return bufferToRead - buffInitial;
+        }
+    }
+    errno = EMSGSIZE;
+    return -1;
+}
+
 
 #endif //ERROR_FUNC_H
